@@ -3,6 +3,7 @@ class TodoApp {
         this.tasks = this.loadTasks();
         this.currentFilter = 'all';
         this.editingTaskId = null;
+        this.searchQuery = '';
         this.init();
     }
 
@@ -16,6 +17,7 @@ class TodoApp {
         const taskInput = document.getElementById('taskInput');
         const addBtn = document.getElementById('addBtn');
         const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('searchInput');
 
         addBtn.addEventListener('click', () => this.addTask());
         taskInput.addEventListener('keypress', (e) => {
@@ -25,6 +27,11 @@ class TodoApp {
             if (e.key === 'Escape' && this.editingTaskId) {
                 this.cancelEditing();
             }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            this.searchQuery = e.target.value.toLowerCase();
+            this.renderTasks();
         });
 
         filterBtns.forEach(btn => {
@@ -37,6 +44,7 @@ class TodoApp {
     addTask() {
         const taskInput = document.getElementById('taskInput');
         const prioritySelect = document.getElementById('prioritySelect');
+        const categorySelect = document.getElementById('categorySelect');
         const text = taskInput.value.trim();
 
         if (!text) {
@@ -45,22 +53,23 @@ class TodoApp {
         }
 
         if (this.editingTaskId) {
-            // Update existing task
             const task = this.tasks.find(t => t.id === this.editingTaskId);
             if (task) {
                 task.text = text;
                 task.priority = prioritySelect.value;
+                task.category = categorySelect.value;
                 task.updatedAt = new Date().toLocaleString('fr-FR');
             }
             this.editingTaskId = null;
             document.getElementById('addBtn').textContent = 'Ajouter';
+            document.getElementById('addBtn').classList.remove('editing');
         } else {
-            // Add new task
             const task = {
                 id: Date.now(),
                 text: text,
                 completed: false,
                 priority: prioritySelect.value,
+                category: categorySelect.value,
                 createdAt: new Date().toLocaleString('fr-FR')
             };
             this.tasks.unshift(task);
@@ -72,6 +81,7 @@ class TodoApp {
 
         taskInput.value = '';
         prioritySelect.value = 'low';
+        categorySelect.value = 'general';
         taskInput.focus();
     }
 
@@ -106,16 +116,36 @@ class TodoApp {
     }
 
     getFilteredTasks() {
+        let filteredTasks = this.tasks;
+
+        // Apply search filter
+        if (this.searchQuery) {
+            filteredTasks = filteredTasks.filter(task => 
+                task.text.toLowerCase().includes(this.searchQuery)
+            );
+        }
+
+        // Apply category and status filters
         switch (this.currentFilter) {
             case 'completed':
-                return this.tasks.filter(task => task.completed);
+                filteredTasks = filteredTasks.filter(task => task.completed);
+                break;
             case 'pending':
-                return this.tasks.filter(task => !task.completed);
+                filteredTasks = filteredTasks.filter(task => !task.completed);
+                break;
             case 'high':
-                return this.tasks.filter(task => task.priority === 'high');
-            default:
-                return this.tasks;
+                filteredTasks = filteredTasks.filter(task => task.priority === 'high');
+                break;
+            case 'today':
+                const today = new Date().toLocaleDateString('fr-FR');
+                filteredTasks = filteredTasks.filter(task => {
+                    const taskDate = new Date(task.createdAt).toLocaleDateString('fr-FR');
+                    return taskDate === today;
+                });
+                break;
         }
+
+        return filteredTasks;
     }
 
     editTask(id) {
@@ -124,10 +154,12 @@ class TodoApp {
             this.editingTaskId = id;
             const taskInput = document.getElementById('taskInput');
             const prioritySelect = document.getElementById('prioritySelect');
+            const categorySelect = document.getElementById('categorySelect');
             const addBtn = document.getElementById('addBtn');
             
             taskInput.value = task.text;
             prioritySelect.value = task.priority;
+            categorySelect.value = task.category;
             addBtn.textContent = 'Modifier';
             addBtn.classList.add('editing');
             taskInput.focus();
@@ -169,6 +201,9 @@ class TodoApp {
                        ${task.completed ? 'checked' : ''} 
                        onchange="app.toggleTask(${task.id})">
                 <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
+                <span class="task-category category-${task.category}">
+                    ${this.getCategoryLabel(task.category)}
+                </span>
                 <span class="task-priority priority-${task.priority}">
                     ${this.getPriorityLabel(task.priority)}
                 </span>
@@ -190,12 +225,27 @@ class TodoApp {
         return labels[priority] || priority;
     }
 
+    getCategoryLabel(category) {
+        const labels = {
+            'general': 'Général',
+            'travail': 'Travail',
+            'personnel': 'Personnel',
+            'courses': 'Courses',
+            'sante': 'Santé'
+        };
+        return labels[category] || category;
+    }
+
     getEmptyMessage() {
+        if (this.searchQuery) {
+            return 'Aucune tâche ne correspond à votre recherche.';
+        }
         const messages = {
             'all': 'Aucune tâche pour le moment. Ajoutez votre première tâche !',
             'completed': 'Aucune tâche terminée.',
             'pending': 'Aucune tâche en cours. Bon travail !',
-            'high': 'Aucune tâche de priorité élevée.'
+            'high': 'Aucune tâche de priorité élevée.',
+            'today': 'Aucune tâche pour aujourd\'hui.'
         };
         return messages[this.currentFilter] || 'Aucune tâche trouvée.';
     }

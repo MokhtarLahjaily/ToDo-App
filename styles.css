@@ -375,4 +375,106 @@ body {
         width: 100%;
         justify-content: flex-end;
     }
+}
+
+.search-section {
+    padding: 20px 30px 0;
+    background: #f8f9fa;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.task-options {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.priority-selector,
+.category-selector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.priority-selector label,
+.category-selector label {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+.priority-selector select,
+.category-selector select {
+    flex: 1;
+    padding: 8px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    background: white;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.priority-selector select:focus,
+.category-selector select:focus {
+    border-color: #667eea;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+    animation: taskSlideIn 0.3s ease-out;
+}
+
+.task-category {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-right: 10px;
+    background: #e9ecef;
+    color: #495057;
+}
+
+.category-general { background: #e9ecef; color: #495057; }
+.category-travail { background: #cff4fc; color: #055160; }
+.category-personnel { background: #d1e7dd; color: #0f5132; }
+.category-courses { background: #fff3cd; color: #664d03; }
+.category-sante { background: #f8d7da; color: #842029; }
+
+@media (max-width: 768px) {
+    .task-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .priority-selector,
+    .category-selector {
+        width: 100%;
+    }
+
+    .search-section {
+        padding: 15px;
+    }
 } 
