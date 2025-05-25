@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Liste de Tâches</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Ma Liste de Tâches</h1>
+            <p>Organisez votre journée efficacement</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-container">
+                <input type="text" id="taskInput" placeholder="Entrez une nouvelle tâche..." maxlength="100">
+                <button id="addBtn">Ajouter</button>
+            </div>
+            <div class="priority-selector">
+                <label for="prioritySelect">Priorité:</label>
+                <select id="prioritySelect">
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyenne</option>
+                    <option value="high">Élevée</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="completedTasks">0</div>
+                <div class="stat-label">Terminées</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="pendingTasks">0</div>
+                <div class="stat-label">En cours</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Toutes</button>
+            <button class="filter-btn" data-filter="pending">En cours</button>
+            <button class="filter-btn" data-filter="completed">Terminées</button>
+            <button class="filter-btn" data-filter="high">Priorité élevée</button>
+        </div>
+
+        <div class="tasks-section">
+            <div id="tasksList"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
